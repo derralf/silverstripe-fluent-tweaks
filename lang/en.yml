@@ -1,0 +1,6 @@
+en:
+  Derralf\FluentTweaks\LocaleExtension:
+    HiddenLabel: 'Hidden'
+    HiddenDescription: 'Hide from Language Menu (published Pages/Contents will still be public/accessible anyway)'
+    SortLabel: 'Sort Order'
+    SortDescription: 'Sort Order in Language Menu'

@@ -1,0 +1,10 @@
+#---
+#Name: fluenttweaks
+#---
+#TractorCow\Fluent\Model\Locale:
+#  extensions:
+#  - Derralf\FluentTweaks\LocaleExtension
+#  default_sort: 'Sort ASC, "Fluent_Locale"."Locale" ASC'
+#  summary_fields:
+#  - Sort
+#  - Hidden

@@ -1,0 +1,6 @@
+de:
+  Derralf\FluentTweaks\LocaleExtension:
+    HiddenLabel: 'verbergen'
+    HiddenDescription: 'Ausblenden im Sprachmenü (veröffentlichte Seiten/Inhalte sind trotzdem weiterhin öffentlich/zugänglich)'
+    SortLabel: 'Sortierung'
+    SortDescription: 'Sortierreihenfolge im Sprachmenü'

@@ -1,0 +1,31 @@
+{
+  "name": "derralf/silverstripe-fluent-tweaks",
+  "description": "add tweaks to fluent",
+  "type": "silverstripe-vendormodule",
+  "keywords": [
+    "silverstripe",
+    "fluent"
+  ],
+  "license": "BSD-3-Clause",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "silverstripe/cms": "^4.2",
+    "silverstripe/vendor-plugin": "^1.0",
+    "tractorcow/silverstripe-fluent": "^4"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.x-dev"
+    },
+    "expose": [
+      "client/dist"
+    ]
+  },
+  "autoload": {
+    "psr-4": {
+      "Derralf\\FluentTweaks\\": "src/"
+    }
+  }
+
+}
