@@ -43,12 +43,14 @@ Private project, no help/support provided
 
 **Caution:** Published Pages/Contents for "hidden" Locales will still be public/accessible anyway. They are just hidden from the Language Menu and/or Meta Tags (alternate links).
 
+**Caution: NEVER EVER** name the function `FilteredLocales()` if you want to use `FluentFilteredExtension`on SiteTree :)
+
 In your Page.php
 
 ```
-    // custom sorting/order for Locales
+    // custom filtering for Locales
     // original: silverstripe-fluent/src/Extension/FluentExtension.php
-    public function FilteredLocales()
+    public function PublicVisibleLocales()
     {
         $data = [];
         if (Locale::getCached()) {
@@ -77,14 +79,16 @@ In your Page.php
   
 ```
 
+### Templates
+
 Override LocaleMenu.ss in templates/Includes/LocaleMenu.ss
 
 ```
-<% if $FilteredLocales %>
+<% if $PublicVisibleLocales %>
 <div class="left">Locale <span class="arrow">&rarr;</span>
 	<nav class="primary">
 		<ul>
-			<% loop $FilteredLocales %>
+			<% loop $PublicVisibleLocales %>
 				<li class="$LinkingMode">
 					<a href="$Link.ATT" <% if $LinkingMode != 'invalid' %>rel="alternate" hreflang="$LocaleRFC1766"<% end_if %>>$Title.XML</a>
 				</li>
@@ -98,7 +102,7 @@ Override LocaleMenu.ss in templates/Includes/LocaleMenu.ss
 Override FluentSiteTree_MetaTags.ss in templates/Includes/FluentSiteTree_MetaTags.ss
 
 ```
-<% if $FilteredLocales %><% loop $FilteredLocales %><% if $LinkingMode != 'invalid' %>
+<% if $PublicVisibleLocales %><% loop $PublicVisibleLocales %><% if $LinkingMode != 'invalid' %>
 	<link rel="alternate" hreflang="$LocaleRFC1766.ATT" href="$AbsoluteLink.ATT" />
 <% end_if %><% end_loop %><% end_if %>
 ```
