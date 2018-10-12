@@ -8,3 +8,7 @@
 #  summary_fields:
 #  - Sort
 #  - Hidden
+
+#Derralf\FluentTweaks\LocaleExtension:
+#  HiddenTitlePrefix: '* '
+#  HiddenTitleSuffix: ' (!)'

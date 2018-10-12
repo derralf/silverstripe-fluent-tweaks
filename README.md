@@ -33,6 +33,10 @@ Private project, no help/support provided
     summary_fields:
     - Sort
     - Hidden
+  
+  Derralf\FluentTweaks\LocaleExtension:
+    HiddenTitlePrefix: '* '
+    HiddenTitleSuffix: ' (!)'
   ```
 
 ## Configuration & Templating
@@ -40,6 +44,7 @@ Private project, no help/support provided
 - Go to Locale Admin and add value for sorting to each locale
 - You may use the same value for multiple locales to create "groups" awithin which alphanumeric sorting takes place
 - select the "Hidden" chackbox to hide the Locale from the frontend
+- optionally go to security and define which user groups/editors can see hidden locales
 
 **Caution:** Published Pages/Contents for "hidden" Locales will still be public/accessible anyway. They are just hidden from the Language Menu and/or Meta Tags (alternate links).
 
@@ -48,7 +53,7 @@ Private project, no help/support provided
 In your Page.php
 
 ```
-    // custom filtering for Locales
+    // custom sorting/order for Locales
     // original: silverstripe-fluent/src/Extension/FluentExtension.php
     public function PublicVisibleLocales()
     {
@@ -58,6 +63,9 @@ In your Page.php
                 /** @var Locale $localeObj */
                 $info = $this->owner->LocaleInformation($localeObj->getLocale());
                 
+                // optional: add Hidden flag, maybe for templating/styling
+                $info->Hidden = $localeObj->Hidden;
+                
                 // optional/test: add ID for sorting
                 // $info->ID = $localeObj->ID;
                 
@@ -65,9 +73,18 @@ In your Page.php
                 $info->LinkingMode = ($info->LinkingMode == 'current') ? ($info->LinkingMode . ' active') : $info->LinkingMode;
                 
                 // if Hidden-Field exists on object and Hidden is set: continue and don't add to array
-                if($localeObj->hasField('Hidden') && $info->Hidden){
-                    continue;
-                }
+                // or check if member can view hidden locales
+                // and add prefix/suffix, if defined
+                if($localeObj->Hidden){
+                    if(!$localeObj->canViewHidden()) {
+                        continue;
+                    }
+                    if($localeObj->Hidden && $prefix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitlePrefix')) {
+                        $info->Title = $prefix . $info->Title;
+                    }
+                    if($localeObj->Hidden && $suffix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitleSuffix')) {
+                        $info->Title = $info->Title . $suffix;
+                    }
                 
                 // add new data to array
                 $data[] = $info;
