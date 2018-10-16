@@ -85,10 +85,9 @@ In your Page.php
                     if($localeObj->Hidden && $suffix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitleSuffix')) {
                         $info->Title = $info->Title . $suffix;
                     }
-                
-                // add new data to array
-                $data[] = $info;
             }
+            // add new data to array
+            $data[] = $info;
         }
         return ArrayList::create($data);
         // return ArrayList::create($data)->sort('ID ASC');
