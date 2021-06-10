@@ -12,15 +12,12 @@
   "require": {
     "silverstripe/cms": "^4.2",
     "silverstripe/vendor-plugin": "^1.0",
-    "tractorcow/silverstripe-fluent": "^4"
+    "tractorcow/silverstripe-fluent": "^4||^5"
   },
   "extra": {
     "branch-alias": {
       "dev-master": "1.x-dev"
-    },
-    "expose": [
-      "client/dist"
-    ]
+    }
   },
   "autoload": {
     "psr-4": {
