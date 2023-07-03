@@ -12,7 +12,7 @@ Private project, no help/support provided
 
 * silverstripe/cms ^4.2
 * silverstripe/vendor-plugin: ^1.0
-* tractorcow/silverstripe-fluent ^4
+* tractorcow/silverstripe-fluent ^4 || ^5
 
 
 ## Installation
@@ -53,45 +53,54 @@ Private project, no help/support provided
 In your Page.php
 
 ```
-    // custom sorting/order for Locales
-    // original: silverstripe-fluent/src/Extension/FluentExtension.php
-    public function PublicVisibleLocales()
-    {
-        $data = [];
-        if (Locale::getCached()) {
-            foreach (Locale::getCached() as $localeObj) {
-                /** @var Locale $localeObj */
-                $info = $this->owner->LocaleInformation($localeObj->getLocale());
-                
-                // optional: add Hidden flag, maybe for templating/styling
-                $info->Hidden = $localeObj->Hidden;
-                
-                // optional/test: add ID for sorting
-                // $info->ID = $localeObj->ID;
-                
-                // optional: add bootstrap linking mode 'active'
-                $info->LinkingMode = ($info->LinkingMode == 'current') ? ($info->LinkingMode . ' active') : $info->LinkingMode;
-                
-                // if Hidden-Field exists on object and Hidden is set: continue and don't add to array
-                // or check if member can view hidden locales
-                // and add prefix/suffix, if defined
-                if($localeObj->Hidden){
-                    if(!$localeObj->canViewHidden()) {
-                        continue;
+        // custom FILTERING/sorting/order for Locales
+        // original: silverstripe-fluent/src/Extension/FluentExtension.php
+        public function PublicVisibleLocales()
+        {
+            $data = [];
+            if (Locale::getCached()) {
+                foreach (Locale::getCached() as $localeObj) {
+
+                    $locale = $localeObj->getLocale();
+
+                    /** @var Locale $localeObj */
+                    $info = $this->owner->LocaleInformation($localeObj->getLocale());
+
+                    // optional: add Hidden flag, maybe for templating/styling
+                    $info->Hidden = $localeObj->Hidden;
+
+                    // optional/test: add ID for sorting
+                    $info->ID = $localeObj->ID;
+
+                    // optional: add bootstrap linking mode 'active'
+                    $info->LinkingMode = ($info->LinkingMode == 'current') ? ($info->LinkingMode . ' active') : $info->LinkingMode;
+
+                    // Fluent 4 only (not needed with Fluent 5): is page published in Locale? -> Filter for alternate links in FluentSiteTree_MetaTags.ss
+                    // $info->isPublished = ($this->owner->isPublishedInLocale($locale)) ? true : false;
+
+                    // if Hidden-Field exists on object and Hidden is set: continue and don't add to array
+                    // or check if member can view hidden locales
+                    // and add prefix/suffix, if defined
+                    if ($localeObj->Hidden) {
+                        if (!$localeObj->canViewHidden()) {
+                            continue;
+                        }
+                        if ($localeObj->Hidden && $prefix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitlePrefix')) {
+                            $info->Title = $prefix . $info->Title;
+                            $info->Language = $prefix . $info->Language;
+                        }
+                        if ($localeObj->Hidden && $suffix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitleSuffix')) {
+                            $info->Title = $info->Title . $suffix;
+                            $info->Language = $info->Language . $suffix;
+                        }
                     }
-                    if($localeObj->Hidden && $prefix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitlePrefix')) {
-                        $info->Title = $prefix . $info->Title;
-                    }
-                    if($localeObj->Hidden && $suffix = Config::inst()->get('Derralf\FluentTweaks\LocaleExtension', 'HiddenTitleSuffix')) {
-                        $info->Title = $info->Title . $suffix;
-                    }
+                    // add new data to array
+                    $data[] = $info;
+                }
             }
-            // add new data to array
-            $data[] = $info;
+            return ArrayList::create($data);
+            // return ArrayList::create($data)->sort('ID ASC');
         }
-        return ArrayList::create($data);
-        // return ArrayList::create($data)->sort('ID ASC');
-    }
   
 ```
 
@@ -100,6 +109,7 @@ In your Page.php
 Override LocaleMenu.ss in templates/Includes/LocaleMenu.ss
 
 ```
+# Fluent 4
 <% if $PublicVisibleLocales %>
 <div class="left">Locale <span class="arrow">&rarr;</span>
 	<nav class="primary">
@@ -118,6 +128,15 @@ Override LocaleMenu.ss in templates/Includes/LocaleMenu.ss
 Override FluentSiteTree_MetaTags.ss in templates/Includes/FluentSiteTree_MetaTags.ss
 
 ```
+# FLuent 5
+<% if $LinkToXDefault %>
+    <link rel="alternate" hreflang="x-default" href="{$absoluteBaseURL.ATT}" />
+<% end_if %>
+<% if $PublicVisibleLocales %><% loop $PublicVisibleLocales %><% if $LinkingMode != 'invalid'  && $isPublished && $canViewInLocale %>
+    <link rel="alternate" hreflang="$LocaleRFC1766.ATT" href="$AbsoluteLink.ATT" />
+<% end_if %><% end_loop %><% end_if %>
+
+# Fluent 4
 <% if $PublicVisibleLocales %><% loop $PublicVisibleLocales %><% if $LinkingMode != 'invalid' %>
 	<link rel="alternate" hreflang="$LocaleRFC1766.ATT" href="$AbsoluteLink.ATT" />
 <% end_if %><% end_loop %><% end_if %>
